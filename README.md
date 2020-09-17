@@ -1,2 +1,2 @@
-# ensor-based-telemetry-management-and-monitoring-simulator.
+# sensor-based-telemetry-management-and-monitoring-simulator.
 Has been written using C++
