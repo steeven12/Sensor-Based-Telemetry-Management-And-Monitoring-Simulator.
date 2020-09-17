@@ -1,0 +1,314 @@
+// 2CCPP_Project.cpp : This file contains the 'main' function. Program execution begins and ends there.#include <iostream>
+#include <stdlib.h>
+#include <time.h>
+#include <stdio.h>
+#include <string.h>
+#include "Sensors.h"
+#include<conio.h>
+#include <iomanip>
+#include <chrono>
+#include <thread>
+#include <functional>
+#include <Windows.h>
+#include <algorithm>
+using namespace std;
+
+// function used to print in different position on console
+void gotoxy(int x, int y)
+{
+    COORD coordinates;     // coordinates is declared as COORD
+    coordinates.X = x;     // defining x-axis
+    coordinates.Y = y;     //defining  y-axis
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coordinates);
+}
+
+// function to display car rank at the end of the race
+void position() {
+    string a[] = { "McLaren M7A","car1","car2","car3","car4","car5","car6", "car7", "car8", "car9", "car10" };
+    string b[] = { "car11", "car12", "car13", "car14", "car15", "car16","car17","car18","car19","car20","Mercedes AMG F1 W10 EQ" };
+    random_shuffle(&a[0], &a[11]);
+    random_shuffle(&b[0], &b[11]);
+    int x = 23;
+    for (int i = 0; i < 11; i++) {
+        gotoxy(90, x);
+        cout << a[i] << "\n";
+        x = x + 1;
+    }
+    for (int j = 0; j < 11; j++) {
+        gotoxy(90, x);
+        cout << b[j] << "\n";
+        x = x + 1;
+    }
+}
+
+// function to set window size
+void setWindowSize() {
+    HWND console = GetConsoleWindow();
+    RECT r;
+    GetWindowRect(console, &r); //stores the console's current dimensions
+
+    MoveWindow(console, r.left, r.top, 1000, 850, TRUE);
+}
+
+int main() {
+
+    setWindowSize();
+
+    Circuit track;
+
+    f1car car1;
+
+    f1car car2;
+
+    int maxDistance = 268550;
+    int maximumSpeed = 320;
+    int mainSpeed = 0; // variable to store speed from speed for car1 function
+    int tempSpeed;
+    tempSpeed = mainSpeed;
+    int mainSpeed2 = 0; // variable to store speed from speed for car2 function
+    int tempSpeed2;
+    tempSpeed2 = mainSpeed2;
+    bool absStatus = 0;
+    bool absStatus2 = 0;
+    car2.speed = rand() % 5 + 1;
+    car2.distanceCovered = rand() % 8 + 5;
+    car1.fuelLevel = 20;
+    car2.fuelLevel = 20 + (rand() % 3 + 1);
+    int setTemp = track.setTemp();
+    string setWeather = track.setWeather();
+
+    while ((car1.distanceCovered < maxDistance) || (car2.distanceCovered < maxDistance)) {
+
+
+
+        if (car1.speed < maximumSpeed) {
+            car1.SpeedIncrease(absStatus);
+        };
+
+        if (car2.speed < maximumSpeed) {
+            car2.SpeedIncrease(absStatus2);
+        };
+
+        if (car1.fuelLevel <= 0)
+        {
+            cout << "Fuel level for car 1 has reached 0" << endl;
+            cout << "Enter car1 fuel here and press enter: ";
+            cin >> car1.fuelLevel;
+            car1.speed = 0;
+            car1.currentRpm = 1500;
+        };
+
+        if (car2.fuelLevel <= 0) {
+            cout << "Fuel level for car 2 has reached 0" << endl;
+            cout << "Enter car2 fuel here and press enter: ";
+            cin >> car2.fuelLevel;
+            car2.speed = 0;
+            car2.currentRpm = 1500;
+        };
+
+
+
+        if (car1.depth >= 30050 && car1.depth <= 30100)
+        {
+            int choice;
+            cout << "The tyre depth for car 1 has reached 3100 micrometer. Press 1 to change it or 0 to continue to move: ";
+            cin >> choice;
+            if (choice == 1)
+            {
+                car1.depth = 50000;
+                car1.speed = 0;
+                car1.currentRpm = 1500;
+                cout << "car1 Tyre changed" << endl;
+                system("pause");
+            }
+
+
+        }
+        else if (car1.depth == 28000) {
+            cout << "Car1 has crashed because the tyre has exploded. BOOOOM" << endl;
+            break;
+        };
+
+        if (car2.depth >= 30050 && car2.depth <= 30100) {
+            int choice;
+            cout << "The tyre depth for car 2 has reached 3100 micrometer. Press 1 to change it or 0 to continue to move: ";
+            cin >> choice;
+            if (choice == 1)
+            {
+                car2.depth = 50000;
+                car2.speed = 0;
+                car2.currentRpm = 1500;
+                cout << "car2 Tyre changed" << endl;
+                system("pause");
+            }
+        }
+        else if (car2.depth == 28000) {
+            cout << "Car1 has crashed because the tyre has exploded. BOOOOM" << endl;
+            break;
+        };
+        system("CLS");
+
+        // CAR1
+        // Display name and all sensors of the first car
+
+        car1.name = "Mercedes AMG F1 W10 EQ";
+        car1.getName();
+
+        car1.fuelFunction(car1.distanceCovered);
+
+        car1.getDepth(car1.distanceCovered, car1.ABS);
+
+        car1.getPressure(track.temp, car1.ABS);
+
+        bool turning = car1.setSteering(car1.SetDistance());
+        absStatus = car1.getABS(car1.turn);
+
+        car1.Temperature(car1.distanceCovered, car1.getCurrentRpm(turning, absStatus));
+
+        car1.getDRS(car1.speed, turning);
+
+        mainSpeed = car1.speed;
+
+        if (mainSpeed > (tempSpeed + 20))
+        {
+            car1.getCurrentGear(mainSpeed);
+            tempSpeed = mainSpeed;
+
+        }
+        else if (mainSpeed < (tempSpeed - 30)) {
+
+            car1.getCurrentGear(mainSpeed);
+            tempSpeed = mainSpeed;
+
+        }
+        else
+        {
+            cout << "Current Gear: " << car1.currentGear << endl;
+        }
+
+        cout << "Speed of the car1 is : " << car1.speed << endl;
+
+
+        // CAR2
+        // Display name and all sensors of the second car
+        gotoxy(70, 0);
+        car2.name = "McLaren M7A";
+        car2.getName();
+
+
+        gotoxy(70, 1);
+        car2.fuelFunction(car2.distanceCovered);
+
+        gotoxy(70, 2);
+        car2.getDepth(car2.distanceCovered, car2.ABS);
+
+        gotoxy(70, 3);
+        car2.getPressure(track.temp, car2.ABS);
+
+
+        gotoxy(70, 4);
+        int distance2 = car2.SetDistance();
+
+        gotoxy(70, 5);
+        bool turning2 = car2.setSteering(distance2);
+
+        gotoxy(70, 6);
+        absStatus2 = car2.getABS(car2.turn);
+
+
+        gotoxy(70, 7);
+        int rpm2 = car2.getCurrentRpm(turning2, absStatus2);
+        gotoxy(70, 8);
+        car2.Temperature(car2.distanceCovered, rpm2);
+
+        gotoxy(70, 9);
+        car2.getDRS(car2.speed, turning2);
+
+        gotoxy(70, 10);
+        mainSpeed2 = car2.speed;
+
+        if (mainSpeed2 > (tempSpeed2 + 20))
+        {
+            car2.getCurrentGear(mainSpeed2);
+            tempSpeed2 = mainSpeed2;
+
+        }
+        else if (mainSpeed2 < (tempSpeed2 - 30)) {
+
+            car2.getCurrentGear(mainSpeed2);
+            tempSpeed2 = mainSpeed2;
+
+        }
+        else
+        {
+            cout << "Current Gear: " << car2.currentGear << endl;
+        }
+
+
+        gotoxy(70, 11);
+        cout << "Speed of the car2 is : " << car2.speed << endl;
+
+        //Display temperature and weather
+
+        gotoxy(90, 15);
+        cout << "Circuit temperature = " << setTemp << endl;
+        gotoxy(91, 16);
+        cout << "Circuit weather = " << setWeather << endl;
+
+        // Print the circuit in the console
+        gotoxy(0, 15);
+        char track1[30][27] = { {'#','#', '#', '#', '#', '#','#','#','#','#','#','#','#','#', '#', '#', '#', '#','#','#','#','#','#','#','#','#','\0'},
+                       {'#','#', '#', '#', '#', '#','#','#','#','#','#','#','#','#', '#', '#', '#', '#','#','#','#','#','#','#','#','#','\0'},
+                       {'#','#', '#', '#', '#', '#','#','#','#','#','#','#','#',' ', ' ', ' ', '#', '#','#','#','#','#','#','#','#','#','\0'},
+                       {'#','#', '#', '#', '#', '#','#','#','#','#','#','#',' ',' ', '#', ' ', '#', '#','#','#','#','#','#','#','#','#','\0'},
+                       {'#','#', '#', '#', '#', '#','#','#','#','#','#',' ',' ','#', '#', ' ', '#', '#','#','#','#','#','#','#','#','#','\0'},
+                       {'#','#', '#', '#', '#', '#','#','#','#','#',' ',' ','#','#', ' ', ' ', '#', '#','#','#','#','#','#','#','#','#','\0'},
+                       {'#','#', '#', '#', '#', '#','#','#','#',' ',' ','#','#',' ', ' ', '#', '#', '#','#','#','#','#','#','#','#','#','\0'},
+                       {'#','#', '#', '#', '#', '#','#','#',' ',' ','#','#',' ',' ', '#', '#', '#', '#',' ',' ','#','#','#','#','#','#','\0'},
+                       {'#','#', '#', '#', '#', '#','#','>','>','#','#','#',' ','#', '#', '#', '#', '#',' ',' ',' ','#','#','#','#','#','\0'},
+                       {'#','#', '#', '#', '#', '#',' ',' ','#','#','#','#',' ','#', '#', '#', '#', '#',' ','#',' ',' ','#','#','#','#','\0'},
+                       {'#','#', '#', '#', '#', ' ',' ','#','#','#','#','#',' ','#', '#', '#', '#', '#',' ','#','#',' ',' ','#','#','#','\0'},
+                       {'#','#', '#', '#', ' ', ' ','#','#','#','#','#','#',' ','#', '#', '#', '#', '#',' ','#','#','#',' ',' ','#','#','\0'},
+                       {'#','#', '#', ' ', ' ', '#','#','#','#','#','#','#',' ','#', '#', '#', '#', '#',' ','#','#','#','#',' ',' ','#','\0'},
+                       {'#','#', ' ', ' ', '#', '#','#','#','#','#','#','#',' ',' ', '#', '#', '#', '#',' ','#','#','#','#','#',' ','#','\0'},
+                       {'#',' ', ' ', '#', '#', '#','#','#','#','#','#','#','#',' ', ' ', '#', '#', '#',' ','#','#','#','#','#',' ','#','\0'},
+                       {'#',' ', '#', '#', '#', '#','#','#','#','#','#','#','#','#', ' ', ' ', '#', ' ',' ','#','#','#','#',' ',' ','#','\0'},
+                       {'#',' ', '#', '#', '#', '#','#','#','#','#','#','#','#','#', '#', ' ', ' ', ' ','#','#','#','#',' ',' ','#','#','\0'},
+                       {'#',' ', '#', '#', '#', '#','#','#','#','#','#','#','#','#', '#', '#', ' ', '#','#','#','#',' ',' ','#','#','#','\0'},
+                       {'#',' ', ' ', '#', '#', '#','#','#','#','#','#','#','#','#', '#', '#', '#', '#','#','#',' ',' ','#','#','#','#','\0'},
+                       {'#','#', ' ', ' ', '#', '#','#','#','#','#','#','#','#','#', '#', '#', '#', '#','#',' ',' ','#','#','#','#','#','\0'},
+                       {'#','#', '#', ' ', ' ', '#','#','#','#','#','#','#','#','#', '#', '#', '#', '#',' ',' ','#','#','#','#','#','#','\0'},
+                       {'#','#', '#', '#', ' ', ' ','#','#','#','#','#','#','#','#', '#', '#', '#', ' ',' ','#','#','#','#','#','#','#','\0'},
+                       {'#','#', '#', '#', '#', ' ',' ','#','#','#','#','#','#','#', '#', '#', ' ', ' ','#','#','#','#','#','#','#','#','\0'},
+                       {'#','#', '#', '#', '#', '#',' ',' ','#','#','#','#','#','#', '#', ' ', ' ', '#','#','#','#','#','#','#','#','#','\0'},
+                       {'#','#', '#', '#', '#', '#','#',' ',' ','#','#','#','#','#', ' ', ' ', '#', '#','#','#','#','#','#','#','#','#','\0'},
+                       {'#','#', '#', '#', '#', '#','#','#',' ',' ','#','#','#',' ', ' ', '#', '#', '#','#','#','#','#','#','#','#','#','\0'},
+                       {'#','#', '#', '#', '#', '#','#','#','#',' ',' ','#',' ',' ', '#', '#', '#', '#','#','#','#','#','#','#','#','#','\0'},
+                       {'#','#', '#', '#', '#', '#','#','#','#','#',' ',' ',' ','#', '#', '#', '#', '#','#','#','#','#','#','#','#','#','\0'},
+                       {'#','#', '#', '#', '#', '#','#','#','#','#','#',' ','#','#', '#', '#', '#', '#','#','#','#','#','#','#','#','#','\0'},
+                       {'#','#', '#', '#', '#', '#','#','#','#','#','#','#','#','#', '#', '#', '#', '#','#','#','#','#','#','#','#','#','\0'},
+
+        };
+        for (int i = 0; i < 30; i++)
+        {
+            for (int j = 0; j < 27; j++)
+            {
+                cout << " " << track1[i][j] << " ";
+            }
+            cout << "\n";
+        }
+
+
+        Sleep(100000 / (100 + car1.speed)); // Function to control speed of loop
+
+
+    }
+
+    // Print car ranking
+    gotoxy(90, 21);
+    cout << "--Final rank--" << endl;
+    position();
+
+    return 0;
+
+}
