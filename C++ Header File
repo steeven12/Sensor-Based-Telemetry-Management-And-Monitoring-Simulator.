@@ -1,0 +1,400 @@
+#pragma once
+#include <iostream>
+#include <stdlib.h>
+#include <time.h>
+#include <stdio.h>
+#include <string.h>
+
+using namespace std;
+
+
+// Genarate random weather and temperature
+class Circuit {
+public:
+    int length = 5371;
+    int left = 5;
+    int right = 4;
+    int minTemp = 2;
+    string weather[2] = { "Sunny", "Rainy" };
+    int temp = 0;
+
+    int setTemp() {
+        //Random weather
+
+        int circuitTemperature = rand() % 59 + minTemp;
+        temp = circuitTemperature;
+        return temp;
+    }
+
+    string setWeather() {
+        srand(time(0));
+        int weatherIndex = rand() % 2;
+        string circuitWeather = weather[weatherIndex];
+        return weather[weatherIndex];
+    }
+};
+
+// Initialise pressure and check conditions to increase or decrease pressure
+class TyrePressure {
+public:
+    //approx 1.1 bar
+    int pressure = 1100;
+
+    int getPressure(int temp, bool ABS) {
+
+        if (temp <= 35 && ABS == 0) {
+            pressure = 1000;
+            cout << "The tyre pressure is " << pressure << endl;
+        }
+        else {
+            pressure = 1300;
+            cout << "The tyre pressure is " << pressure << endl;
+        }
+        return pressure;
+    }
+
+};
+
+// Initialise depth and check conditions to decrease depth
+class TyreWear {
+public:
+    int depth = 50000;
+
+    int getDepth(int distanceCovered, bool ABS) {
+        if (ABS == 1 && distanceCovered > 1000) {
+            depth = depth - 50;
+        }
+        else {
+            depth = depth - 100;
+        }
+        cout << "The depth of the tyre is: " << depth << " micrometer " << endl;
+        return depth;
+    }
+};
+
+// Initialise temperature and check conditions to increase temperature
+class EngineTemperature {
+public:
+    int temperature = 64;
+    int Temperature(int length, int rpm) {
+
+        if ((length > 1500 && length < 3000) && (rpm >= 4000 && rpm < 10000)) {
+            temperature = 200;
+        }
+        else if (length >= 3000 && rpm >= 10000) {
+            temperature = 250;
+        }
+        else {
+            temperature = 64;
+        }
+
+
+        cout << "The temperature of the engine is currently = " << temperature << endl;
+        return temperature;
+    }
+};
+
+// Initialise DRS and check conditions to activate or deactivate DRS
+class DragReductionSystem {
+public:
+    bool DRS = 0;
+
+    int getDRS(int speed, bool turn) {
+        //check if drs = 1 or 0
+        if (turn == 1) {
+            DRS = 0;
+            cout << "DRS is off" << endl;
+        }
+        else if ((speed > 100 && speed < 326) && turn == 0) {
+            DRS = 1;
+            cout << "DRS is on" << endl;
+        }
+        else {
+            DRS = 0;
+            cout << "DRS is off" << endl;
+        }
+        return DRS;
+    }
+};
+
+// Initialise ABS and check conditions to activate or deactivate ABS
+class AntilockBrakingSystem {
+public:
+    bool ABS = 0;
+
+    bool getABS(bool turn) {
+
+        if (turn == 1) {
+            ABS = 1;
+        }
+        else {
+            ABS = 0;
+        }
+
+        cout << "ABS= " << ABS << endl;
+
+        return ABS;
+
+    }
+};
+
+// Declare fuelLevel and decrease it
+class Fuel {
+public:
+    //int initialCapacity = 20;
+    int fuelLevel;
+
+    int fuelFunction(int distance) {
+        fuelLevel = fuelLevel - 1;
+        cout << "Fuel remaining in the car is: " << fuelLevel << " L" << endl;
+        return fuelLevel;
+    };
+};
+
+// Initialise speed and check conditions to increase or decrease it
+class Speedometer {
+public:
+    int speed = 0;
+
+
+    int SpeedIncrease(bool ABS) {
+
+        if (ABS == 1 && speed > 5)
+        {
+            speed = speed - 5;
+
+        }
+        else
+        {
+            speed = speed + 5;
+
+
+        }
+        return speed;
+
+    }
+};
+
+// Initialise MaxGear, currentGear, MaxRpm, currentRpm and check conditions to increase or decrease currentGear or currentRpm
+class GearRpm {
+
+
+public:
+    int MaxGear = 7;
+    int currentGear = 1;
+    int MaxRpm = 15000;
+    int currentRpm = 1500;
+    int incrementVar; //variable to increment RPM
+
+
+    int getCurrentGear(int speed) {
+
+        if (speed <= 20) {
+
+            currentGear = 1;
+
+
+        }
+        else if (speed > 20 && speed <= 100)
+        {
+            currentGear = 2;
+            currentRpm -= 500;
+        }
+        else if (speed > 100 && speed <= 170) {
+
+            currentGear = 3;
+            currentRpm -= 500;
+
+        }
+        else if (speed > 170 && speed <= 200) {
+
+            currentGear = 4;
+            currentRpm -= 500;
+
+        }
+        else if (speed > 170 && speed <= 230) {
+
+            currentGear = 5;
+            currentRpm -= 500;
+
+        }
+        else if (speed > 230 && speed <= 260) {
+
+            currentGear = 6;
+            currentRpm -= 500;
+
+        }
+        else if (speed > 260) {
+
+            currentGear = 7;
+            currentRpm -= 500;
+
+        }
+        cout << "Current Gear: " << currentGear << endl;
+        return 0;
+    }
+
+
+    int getCurrentRpm(int turn, bool ABS) {
+
+
+
+
+        if (currentRpm <= 15000) // condition
+        {
+
+            incrementVar = (rand() % 500) + 1;
+
+            currentRpm += incrementVar;
+
+
+            if (turn == 1 && currentRpm > 3200) {
+                currentRpm -= 2000;
+            }
+
+
+
+            if (ABS == 1) {
+
+                if (currentRpm > 7000) {
+
+                    currentRpm -= 2000;
+                }
+                else if (currentRpm > 2000 && currentRpm < 7000) {
+
+                    currentRpm -= 1000;
+
+                }
+            }
+
+        }
+        cout << "Current RPM: " << currentRpm << endl;
+        return currentRpm;
+
+    }
+
+
+};
+
+// Initialise distanceCovered and increment it
+class Distance {
+public:
+    int distanceCovered = 0;
+
+    int SetDistance() {
+        distanceCovered = distanceCovered + 100;
+        cout << "Distance covered by car:  " << distanceCovered << " m" << endl;
+        return distanceCovered;
+    }
+};
+
+
+
+class steering {
+public:
+
+    int st = 0;
+    //Left Turns
+    int LTurn1 = 25;
+    int LTurn2 = 80;
+    int LTurn3 = 100;
+    int LTurn4 = 150;
+    int LTurn5 = 200;
+    //Right Turns
+    int RTurn1 = 10;
+    int RTurn2 = 50;
+    int RTurn3 = 90;
+    int RTurn4 = 220;
+
+    bool turn = 0;
+
+    bool setSteering(int dist) {
+        turn = 0;
+
+        //Checking Left Turns
+        if (dist == LTurn1) {
+            st = (rand() % 90) * (-1);
+            turn = 1;
+            LTurn1 = dist + 250;
+
+        }
+        if (dist == LTurn2) {
+            st = (rand() % 90) * (-1);
+            turn = 1;
+            LTurn2 = dist + 250;
+
+        }if (dist == LTurn3) {
+            st = (rand() % 90) * (-1);
+            turn = 1;
+            LTurn3 = dist + 250;
+
+        }if (dist == LTurn4) {
+            st = (rand() % 90) * (-1);
+            turn = 1;
+            LTurn4 = dist + 250;
+
+        }if (dist == LTurn5) {
+            st = (rand() % 90) * (-1);
+            turn = 1;
+            LTurn5 = dist + 250;
+
+        }
+
+
+        //Checking Right Turns
+
+        if (dist == RTurn1) {
+            st = rand() % 91;
+            turn = 1;
+            RTurn1 = dist + 250;
+
+        }
+        if (dist == RTurn2) {
+            st = rand() % 91;
+            turn = 1;
+            RTurn2 = dist + 250;
+
+        }if (dist == RTurn3) {
+            st = rand() % 91;
+            turn = 1;
+            RTurn3 = dist + 250;
+
+        }if (dist == RTurn4) {
+            st = rand() % 91;
+            turn = 1;
+            RTurn4 = dist + 250;
+
+        }
+
+
+        if (st > 0 && st <= 90) {
+            cout << "Car turning Right--Angle: " << st << endl;
+            st = 0;
+        }
+        else if (st < 0 && st >= -89) {
+
+            cout << "Car turning Left--Angle: " << st << endl;
+            st = 0;
+        }
+        else {
+            cout << "Car not turning--Angle: " << st << endl;
+        }
+
+
+        return turn;
+    }
+
+};
+
+// f1car inherits from all the sensors
+class f1car : public TyrePressure, public TyreWear, public EngineTemperature, public DragReductionSystem, public AntilockBrakingSystem, public Fuel, public Speedometer, public GearRpm, public Distance, public steering {
+public:
+    string name;
+
+    string getName() {
+        cout << " Car Name : " << name << endl;
+        return name;
+    }
+};
+
+
